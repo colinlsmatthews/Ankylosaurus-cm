@@ -15,7 +15,7 @@ namespace Ankylosaurus.Util
         public GHC_CrvDivideTargetDistance()
           : base("Divide Crv by Target Distance", "CrvTargDist",
               "Iteratively divides a curve by equal distance until all points are as close as possible to the target distance. This means that if you draw a polyline through" +
-                "the points, all segemnts would be of equal length that approximates the target distance.",
+                "the points, all segemnts would be of equal length that approximates the target distance. Big thank you to Nick Desbiens for the methodology.",
               "Ankylosaurus", "Util")
         {
         }

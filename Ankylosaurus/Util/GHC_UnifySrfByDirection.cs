@@ -18,7 +18,7 @@ namespace Ankylosaurus.Util
 		
 		protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
 		{
-			pManager.AddSurfaceParameter("Surface", "S", "Input surfaces to unify direction", GH_ParamAccess.item);
+			pManager.AddBrepParameter("Surface", "S", "Input surfaces to unify direction", GH_ParamAccess.item);
 			pManager.AddVectorParameter("Vector", "V", "The desired vector to unify surface directions towards. The default is the Z-axis", GH_ParamAccess.item, Vector3d.ZAxis);
 			pManager.AddAngleParameter("Tolerance Angle", "T", "The tolerance angle to test the surface direction against", GH_ParamAccess.item, 0.1);
 		}
@@ -32,13 +32,23 @@ namespace Ankylosaurus.Util
 
 		protected override void SolveInstance(IGH_DataAccess DA)
 		{
-			Surface iSrf = null;
+			//Surface iSrf = null;
+			Brep iBrep = null;
 			Vector3d iVector = Vector3d.ZAxis;
 			double iTolerance = 0;
 
-			DA.GetData(0, ref iSrf);
+			DA.GetData(0, ref iBrep);
 			DA.GetData(1, ref iVector);
 			DA.GetData(2, ref iTolerance);
+
+			if (iBrep.Faces.Count > 1)
+			{
+				AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Make sure that you do not supply a joined surface. " +
+					"Surfaces should be single faced, so use either Ankylosaurus's 'Separate Faces by Direction' component, " +
+					"or the 'deconstruct brep' component before inputting the Surface or this will only output the first face of the joined surfaces.");
+			}
+
+            Surface iSrf = iBrep.Faces[0].DuplicateSurface();
 
 			Point3d cPt = getSrfCenterPoint(iSrf);
 			Vector3d srfU = getSrfU(iSrf);
